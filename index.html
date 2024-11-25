@@ -5,18 +5,17 @@
     <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-      <!-- Marcador para exibir a sala -->
-      <a-marker type="pattern" url="r.patt">
-        <!-- Sala de Aula -->
-        <!-- Piso -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="4" height="4" color="#d3d3d3"></a-plane>
+    <a-scene embedded arjs="sourceType: environment;">
+      <!-- Marcador para carregar a sala -->
+      <a-marker preset="kanji">
+        <!-- Piso da sala -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="6" height="6" color="#cfcfcf"></a-plane>
 
-        <!-- Quadro Negro -->
-        <a-box position="0 1 0.5" depth="0.1" height="1" width="2" color="black">
+        <!-- Quadro negro -->
+        <a-box position="0 1 -2" depth="0.1" height="1" width="2" color="black">
           <!-- Texto no quadro -->
           <a-text 
-            value="Matéria: Matemática\nTema: Frações" 
+            value="Matéria: Matemática\nTema: Equações Lineares" 
             color="white" 
             align="center" 
             position="0 0.3 0.05" 
@@ -24,36 +23,25 @@
           </a-text>
         </a-box>
 
-        <!-- Professor (Modelo 3D) -->
+        <!-- Professor (modelo animado) -->
         <a-entity 
           gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/AnimatedCube/glTF/AnimatedCube.gltf" 
-          position="0 0.5 -0.5" 
+          position="0 0.5 0" 
           scale="0.5 0.5 0.5" 
           animation-mixer>
         </a-entity>
 
-        <!-- Mesas e Cadeiras -->
-        <a-box position="-0.5 0.25 -1" depth="0.5" height="0.2" width="0.5" color="#8b4513"></a-box>
-        <a-box position="0.5 0.25 -1" depth="0.5" height="0.2" width="0.5" color="#8b4513"></a-box>
+        <!-- Mesas dos alunos -->
+        <a-box position="-1 0.25 -1" depth="0.5" height="0.2" width="1" color="#8b4513"></a-box>
+        <a-box position="1 0.25 -1" depth="0.5" height="0.2" width="1" color="#8b4513"></a-box>
+
+        <!-- Cadeiras dos alunos -->
+        <a-box position="-1 0.15 -1.5" depth="0.3" height="0.2" width="0.5" color="#654321"></a-box>
+        <a-box position="1 0.15 -1.5" depth="0.3" height="0.2" width="0.5" color="#654321"></a-box>
       </a-marker>
 
       <!-- Câmera AR -->
       <a-entity camera></a-entity>
     </a-scene>
-    <script>
-      <script>
-  navigator.mediaDevices.enumerateDevices().then(devices => {
-    const videoDevices = devices.filter(device => device.kind === "videoinput");
-
-    if (videoDevices.length > 0) {
-      // Selecionar a primeira câmera traseira
-      const rearCamera = videoDevices.find(device => device.label.includes("back")) || videoDevices[0];
-
-      const scene = document.querySelector("a-scene");
-      scene.setAttribute("arjs", `sourceType: webcam; deviceId: ${rearCamera.deviceId}`);
-    }
-  });
-</script>
-    </script>
   </body>
 </html>
