@@ -40,5 +40,20 @@
       <!-- Câmera AR -->
       <a-entity camera></a-entity>
     </a-scene>
+    <script>
+      <script>
+  navigator.mediaDevices.enumerateDevices().then(devices => {
+    const videoDevices = devices.filter(device => device.kind === "videoinput");
+
+    if (videoDevices.length > 0) {
+      // Selecionar a primeira câmera traseira
+      const rearCamera = videoDevices.find(device => device.label.includes("back")) || videoDevices[0];
+
+      const scene = document.querySelector("a-scene");
+      scene.setAttribute("arjs", `sourceType: webcam; deviceId: ${rearCamera.deviceId}`);
+    }
+  });
+</script>
+    </script>
   </body>
 </html>
