@@ -1,33 +1,47 @@
-<!doctype HTML>
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    </head>
-    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
-    <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-    
-    <body style='margin : 0px; overflow: hidden;'>
-        <!-- we add detectionMode and matrixCodeType to tell AR.js to recognize barcode markers -->
-        <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: environment;">
+      <!-- Marcador para carregar a sala -->
+      <a-marker preset="kanji">
+        <!-- Piso da sala -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="6" height="6" color="#cfcfcf"></a-plane>
 
-        <a-assets>
-            <a-asset-item id="animated-asset" src="https://raw.githubusercontent.com/nicolocarpignoli/nicolocarpignoli.github.io/master/ar-playground/models/CesiumMan.gltf"></a-asset-item>
-        </a-assets>
+        <!-- Quadro negro -->
+        <a-box position="0 1 -2" depth="0.1" height="1" width="2" color="black">
+          <!-- Texto no quadro -->
+          <a-text 
+            value="Matéria: Matemática\nTema: Equações Lineares" 
+            color="white" 
+            align="center" 
+            position="0 0.3 0.05" 
+            width="1.8">
+          </a-text>
+        </a-box>
 
-        <a-marker type='barcode' value='7'>
-            <a-box position='0 0.5 0' color="yellow"></a-box>
-        </a-marker>
+        <!-- Professor (modelo animado) -->
+        <a-entity 
+          gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/AnimatedCube/glTF/AnimatedCube.gltf" 
+          position="0 0.5 0" 
+          scale="0.5 0.5 0.5" 
+          animation-mixer>
+        </a-entity>
 
-        <a-marker id="animated-marker" type='barcode' value='6'>
-            <a-entity
-                gltf-model="#animated-asset"
-                scale="2">
-            </a-entity>
-        </a-marker>
+        <!-- Mesas dos alunos -->
+        <a-box position="-1 0.25 -1" depth="0.5" height="0.2" width="1" color="#8b4513"></a-box>
+        <a-box position="1 0.25 -1" depth="0.5" height="0.2" width="1" color="#8b4513"></a-box>
 
-        <!-- use this <a-entity camera> to support multiple-markers, otherwise use <a-marker-camera> instead of </a-marker> -->
-        <a-entity camera></a-entity>
-        </a-scene>
-    </body>
+        <!-- Cadeiras dos alunos -->
+        <a-box position="-1 0.15 -1.5" depth="0.3" height="0.2" width="0.5" color="#654321"></a-box>
+        <a-box position="1 0.15 -1.5" depth="0.3" height="0.2" width="0.5" color="#654321"></a-box>
+      </a-marker>
+
+      <!-- Câmera AR -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
 </html>
