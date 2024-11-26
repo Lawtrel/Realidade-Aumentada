@@ -13,93 +13,102 @@
   <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.module.js"
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
       }
     }
   </script>
-
+  
   <script type="module">
     import * as THREE from 'three';
 
-    // Cena, câmera e renderizador
+    // Configuração inicial
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Luz ambiente
-    const light = new THREE.AmbientLight(0xffffff, 0.7);
+    // Luz na cena
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(0, 10, 10);
     scene.add(light);
 
-    // Luz direcional (representa a iluminação do projetor)
-    const projectorLight = new THREE.PointLight(0xffffff, 1, 50);
-    projectorLight.position.set(0, 10, -10);
-    scene.add(projectorLight);
+    // Piso (chão da sala)
+    const floorGeometry = new THREE.PlaneGeometry(20, 20);
+    const floorMaterial = new THREE.MeshBasicMaterial({ color: 0xdddddd });
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
 
-    // Paredes da sala
-    const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
-    const walls = new THREE.Mesh(new THREE.BoxGeometry(20, 10, 20), wallMaterial);
-    walls.position.y = 5; // Eleva as paredes
-    scene.add(walls);
+    // Função para criar uma cadeira
+    function createChair(x, z) {
+      const seatGeometry = new THREE.BoxGeometry(1, 0.2, 1);
+      const seatMaterial = new THREE.MeshBasicMaterial({ color: 0x333333 });
+      const seat = new THREE.Mesh(seatGeometry, seatMaterial);
+      seat.position.set(x, 0.2, z);
 
-    // Quadro
-    const boardMaterial = new THREE.MeshBasicMaterial({ color: 0x008000 });
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(10, 3), boardMaterial);
-    board.position.set(0, 3, -9.9); // Coloca o quadro na frente
-    scene.add(board);
+      const backrestGeometry = new THREE.BoxGeometry(1, 1, 0.2);
+      const backrest = new THREE.Mesh(backrestGeometry, seatMaterial);
+      backrest.position.set(x, 0.8, z - 0.5);
 
-    // Projetor
-    const projectorMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
-    const projector = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 0.5), projectorMaterial);
-    projector.position.set(0, 9, -10);
-    scene.add(projector);
-
-    // Ar-condicionado (2 unidades no lado esquerdo)
-    const acMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
-    for (let i = 0; i < 2; i++) {
-      const ac = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 1), acMaterial);
-      ac.position.set(-9.5, 7 - i * 4, -5);
-      scene.add(ac);
+      scene.add(seat, backrest);
     }
 
-    // Cadeiras (4 fileiras de 5 cadeiras)
-    const chairMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 5; col++) {
-        const chair = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 1), chairMaterial);
-        chair.position.set(-7 + col * 3, 0.25, -5 + row * 3);
-        scene.add(chair);
+    // Adicionando 20 cadeiras em 4 fileiras
+    const rows = 4;
+    const cols = 5;
+    const spacing = 2;
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        createChair(j * spacing - 4, i * spacing - 4);
       }
     }
 
-    // Professor (representado com uma esfera e um cilindro)
-    const headMaterial = new THREE.MeshBasicMaterial({ color: 0xffcc99 });
-    const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+    // Ar-condicionado no lado esquerdo
+    function createAirConditioner(x, y, z) {
+      const acGeometry = new THREE.BoxGeometry(2, 1, 1);
+      const acMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
+      const ac = new THREE.Mesh(acGeometry, acMaterial);
+      ac.position.set(x, y, z);
+      scene.add(ac);
+    }
+    createAirConditioner(-9, 3, -4);
+    createAirConditioner(-9, 3, 4);
 
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.5), headMaterial);
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2), bodyMaterial);
+    // Quadro (parede da frente)
+    const boardGeometry = new THREE.PlaneGeometry(10, 3);
+    const boardMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const board = new THREE.Mesh(boardGeometry, boardMaterial);
+    board.position.set(0, 2, -9.5);
+    scene.add(board);
 
-    head.position.set(0, 2.5, -7);
-    body.position.set(0, 1, -7);
+    // Projetor no teto
+    const projectorGeometry = new THREE.CylinderGeometry(0.3, 0.5, 1);
+    const projectorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const projector = new THREE.Mesh(projectorGeometry, projectorMaterial);
+    projector.position.set(0, 5, -4);
+    scene.add(projector);
 
-    scene.add(head);
-    scene.add(body);
+    // Professor (simples como um cubo por enquanto)
+    const professorGeometry = new THREE.BoxGeometry(1, 2, 1);
+    const professorMaterial = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
+    const professor = new THREE.Mesh(professorGeometry, professorMaterial);
+    professor.position.set(0, 1, -8);
+    scene.add(professor);
 
-    // Posicionar a câmera
-    camera.position.set(0, 5, 15);
-    camera.lookAt(0, 2, -5);
+    // Posicionando a câmera
+    camera.position.set(0, 6, 10);
+    camera.lookAt(0, 0, 0);
 
-    // Função de animação
+    // Renderização
     function animate() {
       requestAnimationFrame(animate);
 
-      // Movimento do projetor (simulando animação)
-      projector.rotation.y += 0.01;
+      // Pequena rotação no professor como animação
+      professor.rotation.y += 0.01;
 
       renderer.render(scene, camera);
     }
-
     animate();
   </script>
 </body>
